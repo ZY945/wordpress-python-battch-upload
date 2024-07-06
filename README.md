@@ -1,3 +1,4 @@
+# 使用方法
 ```bash
 # 1.创建虚拟环境
 python -m venv test-env
@@ -10,3 +11,6 @@ pip install -r requirements.txt
 # 5.启动脚本(可以现根据所需进行修改)
 py.exe .\app.py
 ```
+# 目前进度
+1.未测试本地图片上传逻辑
+2.部分文章存在，显示```为“`
