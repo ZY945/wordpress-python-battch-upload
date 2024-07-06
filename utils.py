@@ -64,30 +64,11 @@ def batch_upload_to_wordpress(
 ):
     file_list = search_all_file(file_dir, suffix_tuple)
     ## debug用
-    print(file_list)
+    # print(file_list)
     for file_path in file_list:
-        # 将文件路径分割为文件夹和文件名
-        folders = file_path.split(
-            ## 无用的文件夹前缀
-            useless_folder_prefix
-        )[1].split(split_symbol)[:-1]
-        file_name = file_path.split(split_symbol)[-1]
-
-        # Read the file content
-        with open(file_path, "r", encoding="utf-8") as f:
-            file_content = f.read()
-
-        # 获取文章标题,内容,标签
-        upload_to_wordpress(
-            file_name,
-            markdown_to_html(file_content),
-            folders,
-            folders,
-            site_url,
-            username,
-            password,
+        upload_one_file(
+            file_path, useless_folder_prefix, split_symbol, site_url, username, password
         )
-        print(file_path, "上传成功")
         count += 1
         # print("File Content:", file_content)
         # print("Folders:", folders)
@@ -95,7 +76,46 @@ def batch_upload_to_wordpress(
     print("共上传了{}篇文章".format(count))
 
 
+def upload_one_file(
+    file_path,
+    useless_folder_prefix=default_useless_folder_prefix,
+    split_symbol=default_split_symbol,
+    site_url=default_site_url,
+    username=default_username,
+    password=default_password,
+):
+    ## debug用
+    # print(file_list)
+    # 将文件路径分割为文件夹和文件名
+    folders = file_path.split(
+        ## 无用的文件夹前缀
+        useless_folder_prefix
+    )[1].split(split_symbol)[:-1]
+    file_name = file_path.split(split_symbol)[-1]
+
+    # 打开Markdown文件，以二进制模式读取
+    with open(file_path, "rb") as f:
+        file_content = f.read().decode("utf-8")  # 使用utf-8解码成字符串
+
+    # 上传文件
+    upload_to_wordpress(
+        file_name,
+        markdown_to_html(file_content),
+        folders,
+        folders,
+        site_url,
+        username,
+        password,
+    )
+    print(file_path, "上传成功")
+
+
+def add_space_around_backticks(code):
+    return code.replace("```", "\n ``` ")
+
+
 def markdown_to_html(md_content):
+    md_content = add_space_around_backticks(md_content)
     html = markdown(md_content)
     return html
 
